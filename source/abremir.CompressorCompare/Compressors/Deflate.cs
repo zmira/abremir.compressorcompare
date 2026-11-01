@@ -1,0 +1,47 @@
+using System.IO.Compression;
+using Pastel;
+
+namespace abremir.CompressorCompare.Compressors;
+
+internal class Deflate : ICompressor
+{
+    public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
+    {
+        try
+        {
+            using MemoryStream compressedStream = new();
+            using (DeflateStream deflateStream = new(compressedStream, compressionLevel))
+            {
+                deflateStream.Write(data, 0, data.Length);
+            }
+            compressed = compressedStream.ToArray();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Compression failed: {ex.Message}".Pastel(ConsoleColor.Red));
+            return false;
+        }
+    }
+
+    public bool Decompress(byte[] data, ref byte[] decompressed)
+    {
+        try
+        {
+            using MemoryStream compressedStream = new(data);
+            using DeflateStream deflateStream = new(compressedStream, CompressionMode.Decompress);
+            using MemoryStream decompressedStream = new();
+
+            deflateStream.CopyTo(decompressedStream);
+            decompressed = decompressedStream.ToArray();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Decompression failed: {ex.Message}".Pastel(ConsoleColor.Red));
+            return false;
+        }
+    }
+}
