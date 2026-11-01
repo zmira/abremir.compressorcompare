@@ -6,7 +6,7 @@
 
 Needed to run data compression tests with a specific file and, after doing a few searches, did not find quite what I was looking for.
 
-Luckily, came across @bahri-hirfanoglu's [Compression Performance Tester](https://github.com/bahri-hirfanoglu/CSharpCompressionTester), which gave me a good starting point from which to build.
+Luckily, came across [bahri-hirfanoglu]'s [Compression Performance Tester](https://github.com/bahri-hirfanoglu/CSharpCompressionTester), which gave me a good starting point from which to build.
 
 It should be noted that [TestCompressor.cs](./source/abremir.CompressorCompare/TestCompressor.cs), [CompressionClient.cs](./source/abremir.CompressorCompare/CompressionClient.cs), and some of the compression methods implemented in the [Compressors](./source/abremir.CompressorCompare/Compressors/) folder were heavily influenced by what can be found in the `Compression Performance Tester`.
 
@@ -74,7 +74,7 @@ The screenshot above was captured after running the below command:
 > .\abremir.CompressorCompare.exe random -s 25 -r GeneratedText -m Snappy
 ```
 
-For file-based compression tests, you can find a large number of compression test datasets in @amkillam's [Compression Test Data](https://github.com/amkillam/compression-test-data).
+For file-based compression tests, you can find a large number of compression test datasets in [amkillam]'s [Compression Test Data](https://github.com/amkillam/compression-test-data).
 
 ## Dependencies &amp; Acknowledgements
 
