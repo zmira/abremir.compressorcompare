@@ -1,28 +1,21 @@
 using System.IO.Compression;
 using Pastel;
-using ZstdSharp;
+using Snappier;
 
 namespace abremir.CompressorCompare.Compressors;
 
-internal class ZStd : ICompressor
+internal class SnappierSnappy : ICompressor
 {
-    public string Source => "https://github.com/oleg-st/ZstdSharp";
+    public string Source => "https://github.com/brantburnett/Snappier";
 
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
-        int level = compressionLevel switch
-        {
-            CompressionLevel.Fastest => Compressor.MinCompressionLevel,
-            CompressionLevel.SmallestSize => Compressor.MaxCompressionLevel,
-            _ => Compressor.DefaultCompressionLevel
-        };
-
         try
         {
             using MemoryStream compressedStream = new();
-            using (CompressionStream zstdStream = new(compressedStream, level))
+            using (SnappyStream snappyStream = new(compressedStream, CompressionMode.Compress))
             {
-                zstdStream.Write(data, 0, data.Length);
+                snappyStream.Write(data, 0, data.Length);
             }
             compressed = compressedStream.ToArray();
 
@@ -40,10 +33,10 @@ internal class ZStd : ICompressor
         try
         {
             using MemoryStream compressedStream = new(data);
-            using DecompressionStream zstdStream = new(compressedStream);
+            using SnappyStream snappyStream = new(compressedStream, CompressionMode.Decompress);
             using MemoryStream decompressedStream = new();
 
-            zstdStream.CopyTo(decompressedStream);
+            snappyStream.CopyTo(decompressedStream);
             decompressed = decompressedStream.ToArray();
 
             return true;

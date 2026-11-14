@@ -5,7 +5,7 @@ using Pastel;
 
 namespace abremir.CompressorCompare.Compressors;
 
-internal class LZ4 : ICompressor
+internal class K4osLZ4 : ICompressor
 {
     public string Source => "https://github.com/MiloszKrajewski/K4os.Compression.LZ4";
 
