@@ -3,18 +3,18 @@ using Pastel;
 
 namespace abremir.CompressorCompare.Compressors;
 
-internal class Brotli : ICompressor
+internal class SystemDeflate : ICompressor
 {
-    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.brotlistream?view=net-11.0";
+    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.deflatestream?view=net-11.0";
 
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         try
         {
             using MemoryStream compressedStream = new();
-            using (BrotliStream brotliStream = new(compressedStream, compressionLevel))
+            using (DeflateStream deflateStream = new(compressedStream, compressionLevel))
             {
-                brotliStream.Write(data, 0, data.Length);
+                deflateStream.Write(data, 0, data.Length);
             }
             compressed = compressedStream.ToArray();
 
@@ -32,10 +32,10 @@ internal class Brotli : ICompressor
         try
         {
             using MemoryStream compressedStream = new(data);
-            using BrotliStream brotliStream = new(compressedStream, CompressionMode.Decompress);
+            using DeflateStream deflateStream = new(compressedStream, CompressionMode.Decompress);
             using MemoryStream decompressedStream = new();
 
-            brotliStream.CopyTo(decompressedStream);
+            deflateStream.CopyTo(decompressedStream);
             decompressed = decompressedStream.ToArray();
 
             return true;

@@ -3,18 +3,18 @@ using Pastel;
 
 namespace abremir.CompressorCompare.Compressors;
 
-internal class ZLib : ICompressor
+internal class SystemGZip : ICompressor
 {
-    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.zlibstream?view=net-11.0";
+    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=net-11.0";
 
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         try
         {
             using MemoryStream compressedStream = new();
-            using (ZLibStream zlibStream = new(compressedStream, compressionLevel))
+            using (GZipStream gzipStream = new(compressedStream, compressionLevel))
             {
-                zlibStream.Write(data, 0, data.Length);
+                gzipStream.Write(data, 0, data.Length);
             }
             compressed = compressedStream.ToArray();
 
@@ -32,10 +32,10 @@ internal class ZLib : ICompressor
         try
         {
             using MemoryStream compressedStream = new(data);
-            using ZLibStream zlibStream = new(compressedStream, CompressionMode.Decompress);
+            using GZipStream gzipStream = new(compressedStream, CompressionMode.Decompress);
             using MemoryStream decompressedStream = new();
 
-            zlibStream.CopyTo(decompressedStream);
+            gzipStream.CopyTo(decompressedStream);
             decompressed = decompressedStream.ToArray();
 
             return true;
