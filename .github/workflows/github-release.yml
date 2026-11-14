@@ -4,19 +4,40 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Git tag to run against (e.g. v1.2.3)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 env:
   PACKAGE_NAME: abremir.CompressorCompare
+  TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Check tag exists
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          if ! git ls-remote --exit-code --tags \
+               "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL#https://}" \
+               "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag '$TAG' does not exist in this repository"
+            exit 1
+          fi
+          echo "Tag $TAG found on remote"
+
+      - name: Checkout code at the tag
         uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -40,7 +61,7 @@ jobs:
             ${{ env.PACKAGE_NAME }}-linux-x64.zip
             ${{ env.PACKAGE_NAME }}-win-x64.zip
           generate_release_notes: true
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.TAG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
