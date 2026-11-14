@@ -1,0 +1,49 @@
+using System.IO.Compression;
+using Pastel;
+
+namespace abremir.CompressorCompare.Compressors;
+
+internal class ZStandard : ICompressor
+{
+    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.zstandardstream?view=net-11.0";
+
+    public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
+    {
+        try
+        {
+            using MemoryStream compressedStream = new();
+            using (ZstandardStream zstandardStream = new(compressedStream, compressionLevel))
+            {
+                zstandardStream.Write(data, 0, data.Length);
+            }
+            compressed = compressedStream.ToArray();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Compression failed: {ex.Message}".Pastel(ConsoleColor.Red));
+            return false;
+        }
+    }
+
+    public bool Decompress(byte[] data, ref byte[] decompressed)
+    {
+        try
+        {
+            using MemoryStream compressedStream = new(data);
+            using ZstandardStream zstandardStream = new(compressedStream, CompressionMode.Decompress);
+            using MemoryStream decompressedStream = new();
+
+            zstandardStream.CopyTo(decompressedStream);
+            decompressed = decompressedStream.ToArray();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Decompression failed: {ex.Message}".Pastel(ConsoleColor.Red));
+            return false;
+        }
+    }
+}
