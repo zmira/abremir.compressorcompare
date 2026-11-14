@@ -24,8 +24,7 @@ Spinner.Start(
     "Loading compressor types...",
     () => compressorTypes = [.. Assembly.GetExecutingAssembly().GetTypes()
         .Where(type => typeof(ICompressor)
-        .IsAssignableFrom(type) && !type.IsAbstract)
-        .Where(type => type is not null)],
+        .IsAssignableFrom(type) && !type.IsAbstract && type is not null)],
     Patterns.GrowVertical);
 
 Console.Clear();
@@ -36,21 +35,21 @@ var rootCommand = new RootCommand("🗜️ Compare data compressors head-to-head
 var compressionMethodOption = new Option<string>("--compression-method", ["-m"])
 {
     Description = "Compression method to be used",
-    DefaultValueFactory = result => "All"
+    DefaultValueFactory = _ => "All"
 };
 compressionMethodOption.AcceptOnlyFromAmong([.. compressorTypes.Select(compressor => compressor.Name), "All"]);
 
 var compressionLevelOption = new Option<CompressionLevel>("--compression-level", ["-c"])
 {
     Description = "Compression level to be used",
-    DefaultValueFactory = result => CompressionLevel.SmallestSize
+    DefaultValueFactory = _ => CompressionLevel.SmallestSize
 };
 compressionLevelOption.AcceptOnlyFromAmong([.. Enum.GetValues<CompressionLevel>().Where(value => value is not CompressionLevel.NoCompression).Select(value => value.ToString())]);
 
 var numberOfRunsOption = new Option<int>("--number-of-runs", ["-n"])
 {
     Description = "Number of runs for multiple-run tests (>= 0)",
-    DefaultValueFactory = result => 5
+    DefaultValueFactory = _ => 5
 };
 numberOfRunsOption.Validators.Add(result =>
 {
@@ -63,7 +62,7 @@ numberOfRunsOption.Validators.Add(result =>
 var runStressTestOption = new Option<bool>("--stress-test", ["-t"])
 {
     Description = "Run stress test",
-    DefaultValueFactory = result => true
+    DefaultValueFactory = _ => true
 };
 
 Command randomCommand = new("random", "Test compression with randomly generated data");
@@ -71,7 +70,7 @@ Command randomCommand = new("random", "Test compression with randomly generated 
 var sizeOption = new Option<int>("--size", ["-s"])
 {
     Description = "Size of random dataset in MB (> 0)",
-    DefaultValueFactory = result => 10
+    DefaultValueFactory = _ => 10
 };
 sizeOption.Validators.Add(result =>
 {
@@ -84,7 +83,7 @@ sizeOption.Validators.Add(result =>
 var randomizationTypeOption = new Option<RandomizationType>("--randomization-type", ["-r"])
 {
     Description = "Randomization type for the random data",
-    DefaultValueFactory = result => RandomizationType.LowCompressibility
+    DefaultValueFactory = _ => RandomizationType.LowCompressibility
 };
 
 randomCommand.Options.Add(sizeOption);
