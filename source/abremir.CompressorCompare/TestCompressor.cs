@@ -6,18 +6,19 @@ using Pastel;
 
 namespace abremir.CompressorCompare;
 
-internal class TestCompressor(ICompressor compressor, byte[] testData, string compressorName, CompressionLevel compressionLevel, int numberOfRuns, bool runStressTests)
+internal class TestCompressor(ICompressor compressor, byte[] testData, CompressionLevel compressionLevel, int numberOfRuns, bool runStressTests)
 {
     private readonly ICompressor _compressor = compressor;
     private readonly byte[] _testData = testData;
-    private readonly string _compressorName = compressorName;
     private readonly CompressionLevel _compressionLevel = compressionLevel;
     private readonly int _numberOfRuns = numberOfRuns;
     private readonly bool _runStressTests = runStressTests;
 
     public void RunTests()
     {
-        Console.WriteLine($"Testing {_compressorName}...".Pastel(ConsoleColor.Blue));
+        string compressorName = _compressor.GetType().Name;
+
+        Console.WriteLine($"Testing {compressorName}...".Pastel(ConsoleColor.Blue));
 
         RunBaseTests();
 
@@ -31,7 +32,7 @@ internal class TestCompressor(ICompressor compressor, byte[] testData, string co
             TestMultipleRuns();
         }
 
-        Console.WriteLine($"Completed tests for {_compressorName}.\n".Pastel(ConsoleColor.Green));
+        Console.WriteLine($"Completed tests for {compressorName}.\n".Pastel(ConsoleColor.Green));
     }
 
     private void RunBaseTests()
@@ -46,10 +47,10 @@ internal class TestCompressor(ICompressor compressor, byte[] testData, string co
         byte[] compressedData = [];
         bool compressed = _compressor.Compress(_testData, ref compressedData, _compressionLevel);
 
-        double compressionRatio = (double)compressedData.Length / _testData.Length;
+        double compressionRatio = (double)_testData.Length / compressedData.Length;
         long peakMemoryDuringCompression = GC.GetTotalMemory(true) - initialMemory;
         TimeSpan compressionCpuUsage = process.TotalProcessorTime;
-        double reductionPercentage = 100 * (1 - compressionRatio);
+        double savedSpacePercentage = 1.0 - ((double)compressedData.Length / _testData.Length);
 
         stopwatch.Stop();
 
@@ -82,13 +83,13 @@ internal class TestCompressor(ICompressor compressor, byte[] testData, string co
             Console.WriteLine("Compression/Decompression failed.".Pastel(ConsoleColor.Red));
         }
 
-        PrintResult("Compression Ratio", $"{compressionRatio:P2} (smaller is better)", ConsoleColor.Yellow);
+        PrintResult("Compression Ratio", HumanizeRatio(compressionRatio), ConsoleColor.Yellow);
+        PrintResult("Saved space", $"{savedSpacePercentage:P2}", ConsoleColor.Yellow);
         PrintResult("Memory Usage", (finalMemory - initialMemory).Bytes().Humanize(), ConsoleColor.Magenta);
         PrintResult("Peak Memory Usage during Compression", peakMemoryDuringCompression.Bytes().Humanize(), ConsoleColor.Blue);
         PrintResult("Peak Memory Usage during Decompression", peakMemoryDuringDecompression.Bytes().Humanize(), ConsoleColor.Blue);
         PrintResult("CPU Time for Compression", compressionCpuUsage.Humanize());
         PrintResult("CPU Time for Decompression", decompressionCpuUsage.Humanize());
-        PrintResult("Data Size Reduction", $"{reductionPercentage:F2}% (higher is better)");
         PrintResult("Compression Throughput", $"{_testData.Length.Megabytes().Per(compressionTime).Humanize(TimeUnit.Second)} (higher is better)");
         PrintResult("Decompression Throughput", $"{compressedData.Length.Megabytes().Per(decompressionTime).Humanize(TimeUnit.Second)} (higher is better)");
 
@@ -101,6 +102,13 @@ internal class TestCompressor(ICompressor compressor, byte[] testData, string co
             PrintResult("Integrity Test", "Decompressed data does not match the original", ConsoleColor.Red);
         }
     }
+
+    private static string HumanizeRatio(double ratio) => ratio switch
+    {
+        <= 0 => "---",
+        < 1 => $"1:{1.0 / ratio:F2}",
+        _ => $"{ratio:F2}:1"
+    };
 
     private void TestStress()
     {

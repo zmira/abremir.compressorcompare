@@ -252,7 +252,7 @@ void RunCompressors(byte[] dataset, CompressionLevel compressionLevel, int numbe
 
         var compressorInstance = (ICompressor)Activator.CreateInstance(type)!;
 
-        new TestCompressor(compressorInstance, dataset, type.Name, compressionLevel, numberOfRuns, runStressTests).RunTests();
+        new TestCompressor(compressorInstance, dataset, compressionLevel, numberOfRuns, runStressTests).RunTests();
     }
 }
 
