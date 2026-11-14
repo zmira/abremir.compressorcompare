@@ -7,6 +7,8 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal class LZ4 : ICompressor
 {
+    public string Source => "https://github.com/MiloszKrajewski/K4os.Compression.LZ4";
+
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         LZ4Level level = compressionLevel switch

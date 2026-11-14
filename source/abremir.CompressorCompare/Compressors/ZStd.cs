@@ -6,6 +6,8 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal class ZStd : ICompressor
 {
+    public string Source => "https://github.com/oleg-st/ZstdSharp";
+
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         int level = compressionLevel switch

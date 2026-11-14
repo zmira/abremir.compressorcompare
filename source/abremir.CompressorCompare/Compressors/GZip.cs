@@ -5,6 +5,8 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal class GZip : ICompressor
 {
+    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=net-11.0";
+
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         try

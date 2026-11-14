@@ -19,6 +19,7 @@ internal class TestCompressor(ICompressor compressor, byte[] testData, Compressi
         string compressorName = _compressor.GetType().Name;
 
         Console.WriteLine($"Testing {compressorName}...".Pastel(ConsoleColor.Blue));
+        Console.WriteLine(_compressor.Source.Pastel(ConsoleColor.Blue));
 
         RunBaseTests();
 

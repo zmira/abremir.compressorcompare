@@ -5,6 +5,8 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal class ZLib : ICompressor
 {
+    public string Source => "https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.zlibstream?view=net-11.0";
+
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         try

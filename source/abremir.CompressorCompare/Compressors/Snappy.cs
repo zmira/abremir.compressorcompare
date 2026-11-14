@@ -6,6 +6,8 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal class Snappy : ICompressor
 {
+    public string Source => "https://github.com/brantburnett/Snappier";
+
     public bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel)
     {
         try

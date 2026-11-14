@@ -4,6 +4,7 @@ namespace abremir.CompressorCompare.Compressors;
 
 internal interface ICompressor
 {
+    string Source { get; }
     bool Compress(byte[] data, ref byte[] compressed, CompressionLevel compressionLevel);
     bool Decompress(byte[] data, ref byte[] decompressed);
 }
