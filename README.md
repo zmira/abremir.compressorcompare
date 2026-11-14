@@ -36,15 +36,16 @@ Usage:
   abremir.CompressorCompare random [options]
 
 Options:
-  -s, --size <size>                                       Size of random dataset in MB (> 0) [default: 10]
-  -r, --randomization-type                                Randomization type for the random data [default:
-  <GeneratedText|HighCompressibility|LowCompressibility>  LowCompressibility]
-  -c, --compression-level <Fastest|Optimal|SmallestSize>  Compression level to be used [default: SmallestSize]
-  -n, --number-of-runs <number-of-runs>                   Number of runs for multiple-run tests (>= 0) [default: 5]
-  -m, --compression-method                                Compression method to be used [default: All]
-  <All|Brotli|Deflate|GZip|LZ4|Snappy|ZLib|ZStd>
-  -t, --stress-test                                       Run stress test
-  -?, -h, --help                                          Show help and usage information
+  -s, --size <size>                                           Size of random dataset in MB (> 0) [default: 10]
+  -r, --randomization-type                                    Randomization type for the random data [default:
+  <GeneratedText|HighCompressibility|LowCompressibility>      LowCompressibility]
+  -c, --compression-level <Fastest|Optimal|SmallestSize>      Compression level to be used [default: SmallestSize]
+  -n, --number-of-runs <number-of-runs>                       Number of runs for multiple-run tests (>= 0) [default: 5]
+  -m, --compression-method                                    Compression method to be used [default: All]
+  <All|K4osLZ4|SnappierSnappy|SystemBrotli|SystemDeflate|Sys
+  temGZip|SystemZLib|SystemZStandard|ZStdSharp>
+  -t, --stress-test                                           Run stress test [default: true]
+  -?, -h, --help                                              Show help and usage information
 ```
 
 ```text
@@ -58,12 +59,13 @@ Arguments:
   <file-path>  Path to the file to use
 
 Options:
-  -c, --compression-level <Fastest|Optimal|SmallestSize>  Compression level to be used [default: SmallestSize]
-  -n, --number-of-runs <number-of-runs>                   Number of runs for multiple-run tests (>= 0) [default: 5]
-  -m, --compression-method                                Compression method to be used [default: All]
-  <All|Brotli|Deflate|GZip|LZ4|Snappy|ZLib|ZStd>
-  -t, --stress-test                                       Run stress test
-  -?, -h, --help                                          Show help and usage information
+  -c, --compression-level <Fastest|Optimal|SmallestSize>      Compression level to be used [default: SmallestSize]
+  -n, --number-of-runs <number-of-runs>                       Number of runs for multiple-run tests (>= 0) [default: 5]
+  -m, --compression-method                                    Compression method to be used [default: All]
+  <All|K4osLZ4|SnappierSnappy|SystemBrotli|SystemDeflate|Sys
+  temGZip|SystemZLib|SystemZStandard|ZStdSharp>
+  -t, --stress-test                                           Run stress test [default: true]
+  -?, -h, --help                                              Show help and usage information
 ```
 
 ## Example
@@ -71,7 +73,7 @@ Options:
 The screenshot above was captured after running the below command:
 
 ```pwsh
-> .\abremir.CompressorCompare.exe random -s 25 -r GeneratedText -m Snappy
+> .\abremir.CompressorCompare.exe random -s 25 -r GeneratedText -m SnappierSnappy
 ```
 
 For file-based compression tests, you can find a large number of compression test datasets in [amkillam]'s [Compression Test Data](https://github.com/amkillam/compression-test-data).
